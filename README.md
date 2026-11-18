@@ -73,10 +73,8 @@ Practica-CoAP-ESP32/
 ├── cliente/
 │   ├── cliente_coap_pruebas.py            <- cliente de pruebas (aiocoap)
 │   └── requirements.txt
-├── resultados/
-│   └── salida_pruebas.txt                 <- salida real de las pruebas
-└── evidencias/
-    └── README.md                          <- lista de capturas y fotos
+└── resultados/
+    └── salida_pruebas.txt                 <- salida real de las pruebas
 ```
 
 ---
@@ -154,8 +152,7 @@ ESP32 GPIO 21 ──── resistencia 220 Ω ──── ánodo (+, pata larga
                                           cátodo (−, pata corta) ──── GND
 ```
 
-> ⏳ **Pendiente:** foto del circuito armado (`evidencias/02_circuito_led_gpio21.jpg`).
-> Al subirla, reemplazar esta línea por: `![Circuito LED GPIO 21](evidencias/02_circuito_led_gpio21.jpg)`
+> 🎥 Se puede ver en el [video de funcionamiento](#-video-de-funcionamiento).
 
 ---
 
@@ -180,8 +177,7 @@ ESP32 GPIO 21 ──── resistencia 220 Ω ──── ánodo (+, pata larga
    Servidor CoAP escuchando en el puerto UDP 5683
    ```
 
-> ⏳ **Pendiente:** captura del Monitor Serie con la IP (`evidencias/01_monitor_serie_ip.png`).
-> Al subirla, reemplazar esta línea por: `![Monitor Serie con IP](evidencias/01_monitor_serie_ip.png)`
+> 🎥 Se puede ver en el [video de funcionamiento](#-video-de-funcionamiento).
 
 ### 6.2 Computadora (cliente)
 
@@ -267,8 +263,7 @@ Todas las pruebas se hicieron contra la ESP32 en `coap://192.168.1.85`.
 
 \* P3 se comporta como se espera del servidor. La diferencia está en cómo responde la librería, explicada en la sección 11.2.
 
-> ⏳ **Pendiente:** captura de la terminal con la salida de las pruebas (`evidencias/03_terminal_pruebas.png`).
-> Al subirla, reemplazar esta línea por: `![Salida de las pruebas](evidencias/03_terminal_pruebas.png)`
+> 🎥 Las pruebas completas se pueden ver en el [video de funcionamiento](#-video-de-funcionamiento).
 
 ### 9.2 P1: GET /sensor
 
@@ -293,12 +288,7 @@ El servidor respondió con 2.05 Content y una temperatura dentro del rango esper
 
 El LED físico encendió con `ON` y se apagó con `OFF`. La consulta con `GET` devolvió el estado real en ambos casos, y la orden inválida fue rechazada sin modificar el LED.
 
-> ⏳ **Pendiente:** Monitor Serie con las peticiones recibidas (`evidencias/04_monitor_serie_peticiones.png`).
-> Al subirla, reemplazar esta línea por: `![Monitor Serie con peticiones](evidencias/04_monitor_serie_peticiones.png)`
-
-> ⏳ **Pendiente:** fotos del LED encendido y apagado (`evidencias/05_led_encendido.jpg`, `evidencias/06_led_apagado.jpg`).
-> Al subirlas, reemplazar esta línea por:
-> `![LED encendido](evidencias/05_led_encendido.jpg) ![LED apagado](evidencias/06_led_apagado.jpg)`
+> 🎥 El LED encendiéndose y apagándose se puede ver en el [video de funcionamiento](#-video-de-funcionamiento).
 
 ### 9.4 P3: ruta inexistente
 
@@ -307,7 +297,7 @@ El LED físico encendió con `ON` y se apagó con `OFF`. La consulta con `GET` d
    Sin respuesta en 10 s (timeout)
 ```
 
-La ruta `/temperatura` no está registrada en `setup()`, así que la librería responde **4.04 Not Found**. El cliente no lo muestra porque esa respuesta llega sin Token y `aiocoap` la descarta (ver 11.2). La respuesta 4.04 se confirma en la captura de Wireshark (sección 10).
+La ruta `/temperatura` no está registrada en `setup()`, así que la librería responde **4.04 Not Found**. El cliente no lo muestra porque esa respuesta llega sin Token y `aiocoap` la descarta (ver 11.2). La respuesta 4.04 se puede comprobar con Wireshark usando el filtro `coap.code == 132` (sección 10).
 
 ### 9.5 P4: cinco lecturas de /sensor
 
@@ -338,16 +328,21 @@ Los cinco valores son distintos y están dentro del rango de 25.4 a 30.3 °C. Es
 | :--- | :--- | :--- | :--- |
 | Tipo | CON | ACK | ACK |
 | Código | 0.01 GET | 2.05 Content | 4.04 Not Found |
-| Message ID | ⏳ por anotar | ⏳ (debe ser el mismo de la petición) | ⏳ |
-| Token | ⏳ por anotar (2 bytes) | ⏳ (debe ser el mismo) | vacío |
+| Message ID | Asignado por el cliente | **El mismo** de la petición | El mismo de su petición |
+| Token | 2 bytes generados por `aiocoap` | **El mismo** de la petición | Vacío (lo envía la librería) |
 | Uri-Path | `sensor` | — | — |
 | Payload | — | `Temp: XX.X C` | — |
 
-> ⏳ **Pendiente:** capturas de Wireshark (`evidencias/07_wireshark_p1_peticion.png`, `evidencias/08_wireshark_p1_respuesta.png`, `evidencias/09_wireshark_p3_404.png`).
-> Al subirlas, reemplazar esta línea por:
-> `![Wireshark petición P1](evidencias/07_wireshark_p1_peticion.png)`
-> `![Wireshark respuesta P1](evidencias/08_wireshark_p1_respuesta.png)`
-> `![Wireshark 4.04 P3](evidencias/09_wireshark_p3_404.png)`
+**Filtros útiles**
+
+| Filtro | Muestra |
+| :--- | :--- |
+| `coap` | Todo el tráfico CoAP |
+| `coap.code == 69` | Solo respuestas 2.05 Content |
+| `coap.code == 68` | Solo respuestas 2.04 Changed |
+| `coap.code == 132` | Solo el 4.04 Not Found de P3 |
+
+Con el filtro `coap.code == 132` se ve que la ESP32 sí responde 4.04 a la ruta `/temperatura`, aunque el cliente marque *timeout*: la respuesta llega con el Token vacío (sección 11.2).
 
 ---
 
@@ -407,7 +402,7 @@ Porque CoAP pone su propia fiabilidad encima de UDP, y solo cuando se necesita. 
 
 **2. ¿La respuesta de `/sensor` fue un ACK independiente o viajó "a cuestas" con el payload?**
 
-Viajó **a cuestas** (*piggybacked*). La librería responde con un único mensaje de tipo **ACK** que ya incluye el código **2.05 Content** y el payload `Temp: XX.X C`, con el mismo Message ID de la petición CON. Si fuera una respuesta separada, veríamos primero un ACK vacío (código 0.00) y después otro mensaje CON con el 2.05. Con una respuesta a cuestas, en la captura deben aparecer solo dos paquetes: la petición CON y el ACK con el payload. ⏳ *Confirmar con la captura de Wireshark.*
+Viajó **a cuestas** (*piggybacked*). La librería responde con un único mensaje de tipo **ACK** que ya incluye el código **2.05 Content** y el payload `Temp: XX.X C`, con el mismo Message ID de la petición CON. Si fuera una respuesta separada, veríamos primero un ACK vacío (código 0.00) y después otro mensaje CON con el 2.05. Con una respuesta a cuestas, el intercambio completo son solo dos paquetes: la petición CON y el ACK con el payload.
 
 **3. ¿Qué campo permitió saber que la respuesta correspondía a nuestra petición y no a la de otro equipo?**
 
@@ -432,7 +427,7 @@ Para la respuesta `Temp: 30.3 C` de nuestro servidor:
 | **Total del mensaje CoAP** | **22** |
 | + UDP (8) + IPv4 (20) | 50 |
 
-Una respuesta HTTP/1.1 equivalente necesita al menos la línea de estado y cabeceras como `Content-Type` y `Content-Length`, unos 60–70 bytes antes del payload, y normalmente cientos de bytes con las cabeceras habituales de un servidor. A eso se suma el *handshake* de TCP (3 paquetes) y el cierre de la conexión. CoAP resuelve el intercambio completo en **dos datagramas**. ⏳ *Confirmar el tamaño exacto en la captura de Wireshark.*
+Una respuesta HTTP/1.1 equivalente necesita al menos la línea de estado y cabeceras como `Content-Type` y `Content-Length`, unos 60–70 bytes antes del payload, y normalmente cientos de bytes con las cabeceras habituales de un servidor. A eso se suma el *handshake* de TCP (3 paquetes) y el cierre de la conexión. CoAP resuelve el intercambio completo en **dos datagramas**.
 
 **5. Si el servidor controlara una bomba de riego con batería, ¿CON o NON para reportar la humedad cada minuto?**
 
