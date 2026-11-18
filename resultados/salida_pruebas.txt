@@ -1,0 +1,82 @@
+Salida real de las pruebas
+Comando: python cliente_coap_pruebas.py todo
+Servidor: ESP32 en 192.168.1.85, puerto UDP 5683, LED externo en GPIO 21
+-------------------------------------------------------------------------
+
+=== P1: GET /sensor ===
+
+-> GET coap://192.168.1.85/sensor
+   Código : 2.05 Content
+   Payload: Temp: 30.3 C
+   Tiempo : 104.6 ms
+
+=== P2 + Reto 1: POST /led ON, consultar, OFF, consultar ===
+
+-> POST coap://192.168.1.85/led  payload="ON"
+   Código : 2.04 Changed
+   Payload: LED: ENCENDIDO
+   Tiempo : 4.7 ms
+
+-> GET coap://192.168.1.85/led
+   Código : 2.05 Content
+   Payload: LED: ENCENDIDO
+   Tiempo : 6.8 ms
+
+-> POST coap://192.168.1.85/led  payload="OFF"
+   Código : 2.04 Changed
+   Payload: LED: APAGADO
+   Tiempo : 32.9 ms
+
+-> GET coap://192.168.1.85/led
+   Código : 2.05 Content
+   Payload: LED: APAGADO
+   Tiempo : 8.4 ms
+
+=== Reto 1: orden inválida (se espera 4.00 Bad Request) ===
+
+-> POST coap://192.168.1.85/led  payload="HOLA"
+   Código : 4.00 Bad Request
+   Payload: Error: usa ON u OFF
+   Tiempo : 4.5 ms
+
+=== P3: ruta inexistente /temperatura ===
+   (CoAPSimple manda el 4.04 sin Token; aiocoap puede marcar
+    timeout. Verifica el 4.04 en Wireshark.)
+
+-> GET coap://192.168.1.85/temperatura
+   Sin respuesta en 10 s (timeout)
+
+=== P4: 5 lecturas de /sensor ===
+
+-> GET coap://192.168.1.85/sensor
+   Código : 2.05 Content
+   Payload: Temp: 28.0 C
+   Tiempo : 19.2 ms
+
+-> GET coap://192.168.1.85/sensor
+   Código : 2.05 Content
+   Payload: Temp: 29.7 C
+   Tiempo : 102.7 ms
+
+-> GET coap://192.168.1.85/sensor
+   Código : 2.05 Content
+   Payload: Temp: 27.5 C
+   Tiempo : 99.0 ms
+
+-> GET coap://192.168.1.85/sensor
+   Código : 2.05 Content
+   Payload: Temp: 27.6 C
+   Tiempo : 101.6 ms
+
+-> GET coap://192.168.1.85/sensor
+   Código : 2.05 Content
+   Payload: Temp: 29.8 C
+   Tiempo : 103.6 ms
+
+| Lectura | Respuesta |
+| :---: | :--- |
+| 1 | Temp: 28.0 C |
+| 2 | Temp: 29.7 C |
+| 3 | Temp: 27.5 C |
+| 4 | Temp: 27.6 C |
+| 5 | Temp: 29.8 C |
