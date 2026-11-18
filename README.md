@@ -19,7 +19,7 @@
 
 ## 📑 Contenido
 
-1. [Resumen](#-1-resumen)
+1. [Resumen](#-1-resumen) · [Video](#-video-de-funcionamiento)
 2. [Estructura del repositorio](#-2-estructura-del-repositorio)
 3. [Materiales](#-3-materiales)
 4. [Marco teórico](#-4-marco-teórico-coap-en-pocas-palabras)
@@ -51,6 +51,14 @@ Convertimos una ESP32 en un **servidor CoAP** (Constrained Application Protocol,
 Además de la práctica base (pruebas P1–P4), realizamos el **Reto 1** (LED físico) y corregimos un detalle de compatibilidad del servidor con el cliente de Python (ver [sección 11](#-11-hallazgos-técnicos)).
 
 **Resultado:** todas las pruebas funcionaron con la ESP32 en la IP `192.168.1.85`. La salida completa está en [`resultados/salida_pruebas.txt`](resultados/salida_pruebas.txt).
+
+### 🎥 Video de funcionamiento
+
+El video con la demostración del prototipo está en Google Drive:
+
+**[▶️ Ver el video del funcionamiento](https://drive.google.com/drive/folders/1MVohdBMKIYfqj2gRCWGgWuZ6j4Wyt1i4)**
+
+Muestra el arranque del servidor y la IP asignada, la lectura de `/sensor` (P1), el encendido y apagado del LED en el GPIO 21 (P2 y Reto 1), la orden inválida (4.00), la ruta inexistente (P3) y las cinco lecturas de P4.
 
 ---
 
